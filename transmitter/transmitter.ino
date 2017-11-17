@@ -42,16 +42,19 @@ void loop() {
 
   load(x); // envoie x entre 0 et 180
   load(y); // envoie y entre 0 et 180
+
   Serial.println("=============");
 }
 
 void load (short pin) {
   int mean = 0, mesure;
   int nbmesure = 10;
-  for (short i = 0; i <= nbmesure; i++) {
-    mesure = round(analogRead(pin));
+   
+  for (short i = 0; i < nbmesure; i++) {
+    mesure = analogRead(pin);
     mesure = map(mesure, 0, 1023, 0, 179);
     mean += mesure;
+    
     delay(5);
   }
   mean /= nbmesure;

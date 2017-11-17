@@ -12,19 +12,8 @@
 #include <RF24.h>
 RF24 radio(7, 8); // CE, CSN
 const byte address[6] = "00001";
-int xvalue;
-int yvalue;
-int xrturn;
-int yrturn;
 Servo leftservo;
 Servo rightservo;
-int xturn;
-int moduleTourne;
-int yturn;
-int ymap;
-int xmap;
-int yloadmap;
-int xloadmap;
 
 void setup() {
   Serial.begin(9600);
@@ -36,57 +25,53 @@ void setup() {
   rightservo.attach(10);
 }
 void loop() {
-  if (radio.available()) {
-
-    radio.read(&xmap, sizeof(xmap));
-    radio.read(&ymap, sizeof(ymap));
-
-  }
-  //Serial.println ("x "+xvalue+"y "+yvalue);
-
-
-
-
-  if (ymap >= 90) {
-    Serial.println("a");
-    /*
-      moduleTourne = map(yvalue,600,1023,1,5);
-      moduleTourne = 179/moduleTourne;
-      xturn = map(xvalue, 0, 1023, 0, 179);
-      xrturn = map(xvalue, 0, 1023, moduleTourne, 0);
-    */
-
-  }
-  else if (ymap <= 90) {
-    Serial.println("y");
-    /*
-      moduleTourne = map(yvalue,0,400,5,1);
-      moduleTourne = 179/moduleTourne;
-      xturn = map(xvalue, 0, 1023, 0, moduleTourne);
-      xrturn = map(xvalue, 0, 1023, 179, 0);
-    */
-
-  }
-  else {
-    xturn = map(xvalue, 0, 1023, 0, 179);
-    xrturn = map(xvalue, 0, 1023, 179, 0);
-  }
-  /*
-    Serial.print ("yval  ");
-    Serial.print (yvalue);
-
-    Serial.print (" xval  ");
-    Serial.print (xvalue);
-    Serial.print (" xturn  ");
-    Serial.print (xturn);
-    Serial.print ("  xrturn  ");
-    Serial.print (xrturn);
-    Serial.print ("   module  ");
-    Serial.println (moduleTourne);
+  int x, y;
+  int left, right;
+  Serial.println(radio.getPayloadSize());
+  if (radio.available() && radio.getPayloadSize() >= sizeof(x)+sizeof(y)) {
+    radio.read(&x, sizeof(x));
     delay(10);
-    leftservo.write(xturn);
-    rightservo.write(xrturn);
+    radio.read(&y, sizeof(y));
+    delay(10);
+    Serial.print(x);
+    Serial.print(", ");
+    Serial.println(y);
 
-  */
+    int moduleTourne = 179 / moduleTourne;
+    if (y > 90) {
+      Serial.println("a");
+      right = map(x, 0, 179, moduleTourne, 0);
+      advance(x, right);
+    }
+    else if (y < 90) {
+      Serial.println("y");
+      left = map(x, 0, 179, 0, moduleTourne);
+      advance(left, x);
+    }
+    else if (y == 90) {
+      left = 90;
+      right = 90;
+      advance(left, right);
+    }
+    /*
+      Serial.print ("yval  ");
+      Serial.print (yvalue);
+
+      Serial.print (" xval  ");
+      Serial.print (xvalue);
+      Serial.print (" xturn  ");
+      Serial.print (xturn);
+      Serial.print ("  xrturn  ");
+      Serial.print (xrturn);
+      Serial.print ("   module  ");
+      Serial.println (moduleTourne);
+      delay(10);
+    */
+  }
+}
+
+void advance(int left, int right) {
+  leftservo.write(left);
+  rightservo.write(right);
 }
 
