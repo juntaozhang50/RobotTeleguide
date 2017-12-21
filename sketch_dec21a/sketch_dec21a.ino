@@ -58,7 +58,11 @@ int invertyvalue;
 int left; 
 int right;
 // Serial.println(radio.getPayloadSize()); 
-
+if(sense() < 10) {
+  xvalue = 90;
+  yvalue= 90;
+}
+else {
 if (radio.available()&&radio.getPayloadSize() >= sizeof(xvalue)+sizeof(yvalue) )  { // vérfier si la communication et établie
 
 
@@ -71,6 +75,7 @@ if (radio.available()&&radio.getPayloadSize() >= sizeof(xvalue)+sizeof(yvalue) )
   Serial.print("\t");
   Serial.println(xvalue);
   delay(200);
+}
 }
 invertyvalue = map(yvalue, 0, 180, 180, 0); // valeur inverse de yvalue ; puisque les roues sont inversés
 int moduleTourne = 179 / moduleTourne; // variable module pour scaler la  trajectoire
