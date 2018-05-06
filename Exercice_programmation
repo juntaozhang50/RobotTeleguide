@@ -1,0 +1,16 @@
+// code pour suite triangulaire
+long  i = 1; // rang en long pour aller presqu'à l'infini
+long total; // terme même chose
+void setup() {
+  Serial.begin(9600); // ouvrir le port de communication
+}
+void add() { // procédure pour augmenter le terme de 1
+  i=i+1;
+}
+void loop() {
+  add(); // à mesure que le rang augmente
+  total= (i*(i+1))/2; // valeur de la fonction 
+  Serial.println(total);
+  delay(100);
+
+}
